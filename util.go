@@ -8,11 +8,13 @@ import (
 	"crypto/sha1"
 	"crypto/x509"
 	"encoding/base64"
+	"encoding/hex"
 	"encoding/pem"
 	"errors"
 	"golang.org/x/crypto/pkcs12"
 	"io/ioutil"
 	"log"
+	"strings"
 )
 
 var (
@@ -31,7 +33,7 @@ func SetPfxPath(pfxPath string) {
 func SetPfxPwd(pfxPwd string) {
 	PFX_PWD = pfxPwd
 }
-func getPair() {
+func GetPair() {
 	bytes, err := ioutil.ReadFile(PFX_PATH)
 	if err != nil {
 		log.Fatal(err)
@@ -60,6 +62,28 @@ func Sign(params string) (string, error) {
 	}
 	singStr := base64.StdEncoding.EncodeToString(sig)
 	return singStr, nil
+}
+func EncryptionSI(information string) (string, error) {
+	if PFX_PATH == "" {
+		return "", NO_PFX_PATH
+	}
+	if PFX_PWD == "" {
+		return "", NO_PFX_PWD
+	}
+	block, _ := pem.Decode(caCert)
+	var cert *x509.Certificate
+	cert, err := x509.ParseCertificate(block.Bytes)
+	if err != nil {
+		log.Fatal(err)
+	}
+	rsaPublicKey := cert.PublicKey.(*rsa.PublicKey)
+	sig, err := rsa.EncryptPKCS1v15(rand.Reader, rsaPublicKey, []byte(information))
+	if err != nil {
+		return "", err
+	}
+	a := hex.EncodeToString(sig)
+	upper := strings.ToUpper(a)
+	return upper, nil
 }
 
 func VerifySign(signSource string, sign string) error {
