@@ -65,7 +65,7 @@ func (y *YunClient) Request(service string, method string, params map[string]int
 	}
 	trueUrl := y.serverUrl + url.PathEscape(up) + "sign=" + sign
 	if sourceFrom != nil && len(sourceFrom) >= 2 && sourceFrom[1] == 1 {
-		return nil, map[string]string{"toUrl": "http://116.228.64.55:6900/yungateway/member/signContract.html?" + url.PathEscape(up) + "sign=" + sign}, nil
+		return nil, map[string]string{"toUrl": signContactUrl + url.PathEscape(up) + "sign=" + sign}, nil
 	}
 	resp, err := httpClient.Post(trueUrl, "application/x-www-form-urlencoded;charset=utf-8", nil)
 	if err != nil {
