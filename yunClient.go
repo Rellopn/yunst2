@@ -30,6 +30,7 @@ type YunClient struct {
 func (y *YunClient) SetSignContactUrl(signContactUrl string) {
 	y.signContactUrl = signContactUrl
 }
+
 func NewYunClient(serverUrl string, sysId string, pwd string, alias string, version string, path string, tlCertPath string) *YunClient {
 	SetPfxPath(path)
 	SetPfxPwd(pwd)
@@ -44,6 +45,7 @@ func NewYunClient(serverUrl string, sysId string, pwd string, alias string, vers
 		path:       path,
 		tlCertPath: tlCertPath}
 }
+
 func setTlsClient(tlPath string) {
 	caCerti, err := ioutil.ReadFile(tlPath)
 	if err != nil {
