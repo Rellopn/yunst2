@@ -68,7 +68,7 @@ func (y *YunClient) Request(service string, method string, params map[string]int
 		return nil, nil, err
 	}
 	trueUrl := y.serverUrl + url.PathEscape(up) + "sign=" + sign
-	if sourceFrom != nil && len(sourceFrom) >= 2 && sourceFrom[1] == 1 {
+	if sourceFrom != nil && len(sourceFrom) >= 1 && sourceFrom[0] == 1 {
 		return nil, map[string]string{"toUrl": y.signContactUrl + url.PathEscape(up) + "sign=" + sign}, nil
 	}
 	resp, err := httpClient.Post(trueUrl, "application/x-www-form-urlencoded;charset=utf-8", nil)
@@ -85,14 +85,14 @@ func (y *YunClient) Request(service string, method string, params map[string]int
 		return nil, nil, err
 	}
 	// 默认是同步请求
-	if sourceFrom == nil || len(sourceFrom) == 0 {
-		if err := verifySign1(res); err != nil {
-			return nil, nil, err
-		}
-	} else { //页面跳转、异步响应报文验签
-		if err := verifySign2(res); err != nil {
-			return nil, nil, err
-		}
+	//if sourceFrom == nil || len(sourceFrom) == 0 {
+	if err := verifySign1(res); err != nil {
+		return nil, nil, err
+		//}
+		//} else { //页面跳转、异步响应报文验签
+		//	if err := verifySign2(res); err != nil {
+		//		return nil, nil, err
+		//	}
 	}
 
 	return resp, res, nil
@@ -145,7 +145,9 @@ func verifySign1(res map[string]string) error {
 	}
 	return VerifySign(res["signedValue"], res["sign"])
 }
-func verifySign2(res map[string]string) error {
+
+// 页面跳转、异步响应报文验签
+func VerifySign2(res map[string]string) error {
 	if res["sysid"] == "" {
 		return errors.New("sysid is null")
 	}
