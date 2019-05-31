@@ -18,19 +18,14 @@ import (
 )
 
 var (
-	PFX_PATH       = ""
-	PFX_PWD        = ""
-	NO_PFX_PATH    = errors.New("can not find PFX_PATH")
-	NO_PFX_PWD     = errors.New("can not find PFX_PWD")
-	privateKey     interface{}
-	certificate    *x509.Certificate
-	signContactUrl = ""
+	PFX_PATH    = ""
+	PFX_PWD     = ""
+	NO_PFX_PATH = errors.New("can not find PFX_PATH")
+	NO_PFX_PWD  = errors.New("can not find PFX_PWD")
+	privateKey  interface{}
+	certificate *x509.Certificate
 )
 
-//设置签约地址的前缀
-func SetSignPreUrl(signContactUrl string) {
-	signContactUrl = signContactUrl
-}
 func SetPfxPath(pfxPath string) {
 	PFX_PATH = pfxPath
 }

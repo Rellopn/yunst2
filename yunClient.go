@@ -17,15 +17,19 @@ var httpClient *http.Client
 var caCert []byte
 
 type YunClient struct {
-	serverUrl  string
-	sysId      string
-	pwd        string
-	alias      string
-	version    string
-	path       string
-	tlCertPath string
+	serverUrl      string
+	sysId          string
+	pwd            string
+	alias          string
+	version        string
+	path           string
+	tlCertPath     string
+	signContactUrl string
 }
 
+func (y *YunClient) SetSignContactUrl(signContactUrl string) {
+	y.signContactUrl = signContactUrl
+}
 func NewYunClient(serverUrl string, sysId string, pwd string, alias string, version string, path string, tlCertPath string) *YunClient {
 	SetPfxPath(path)
 	SetPfxPwd(pwd)
@@ -65,7 +69,7 @@ func (y *YunClient) Request(service string, method string, params map[string]int
 	}
 	trueUrl := y.serverUrl + url.PathEscape(up) + "sign=" + sign
 	if sourceFrom != nil && len(sourceFrom) >= 2 && sourceFrom[1] == 1 {
-		return nil, map[string]string{"toUrl": signContactUrl + url.PathEscape(up) + "sign=" + sign}, nil
+		return nil, map[string]string{"toUrl": y.signContactUrl + url.PathEscape(up) + "sign=" + sign}, nil
 	}
 	resp, err := httpClient.Post(trueUrl, "application/x-www-form-urlencoded;charset=utf-8", nil)
 	if err != nil {
