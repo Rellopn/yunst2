@@ -56,7 +56,8 @@ func setTlsClient(tlPath string) {
 	httpClient = &http.Client{
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{
-				RootCAs: caCertPool,
+				RootCAs:            caCertPool,
+				InsecureSkipVerify: true,
 			},
 		},
 	}
