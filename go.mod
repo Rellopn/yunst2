@@ -1,4 +1,4 @@
-module yunst2
+module github.com/Rellopn/yunst2
 
 go 1.20
 
