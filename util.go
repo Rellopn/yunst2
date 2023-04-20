@@ -12,8 +12,8 @@ import (
 	"encoding/pem"
 	"errors"
 	"golang.org/x/crypto/pkcs12"
-	"io/ioutil"
 	"log"
+	"os"
 	"strings"
 )
 
@@ -34,7 +34,7 @@ func SetPfxPwd(pfxPwd string) {
 	PFX_PWD = pfxPwd
 }
 func GetPair() {
-	bytes, err := ioutil.ReadFile(PFX_PATH)
+	bytes, err := os.ReadFile(PFX_PATH)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -83,6 +83,25 @@ func EncryptionSI(information string) (string, error) {
 	}
 	return strings.ToUpper(hex.EncodeToString(sig)), nil
 }
+
+func DecryptionSI(information string) (string, error) {
+	if PFX_PATH == "" {
+		return "", NO_PFX_PATH
+	}
+	if PFX_PWD == "" {
+		return "", NO_PFX_PWD
+	}
+	deBytes, err := hex.DecodeString(information)
+	if err != nil {
+		return "", err
+	}
+	decodeBytes, err := rsa.DecryptPKCS1v15(rand.Reader, privateKey.(*rsa.PrivateKey), deBytes)
+	if err != nil {
+		return "", err
+	}
+	return string(decodeBytes), nil
+}
+
 func VerifySign(signSource string, sign string) error {
 	h := md5.New()
 	h.Write([]byte(signSource))
