@@ -70,7 +70,7 @@ func (y *YunClient) Request(service string, method string, params map[string]int
 	if err != nil {
 		return nil, nil, err
 	}
-	trueUrl := y.serverUrl + url.PathEscape(up) + "sign=" + sign
+	trueUrl := y.serverUrl + up + "sign=" + sign
 	if sourceFrom != nil && len(sourceFrom) >= 1 && sourceFrom[0] == 1 {
 		return nil, map[string]string{"toUrl": y.signContactUrl + url.PathEscape(up) + "sign=" + sign}, nil
 	}
@@ -122,7 +122,7 @@ func (y *YunClient) buildPostBody(params map[string]interface{}) (string, string
 	sb.WriteString("&req=")
 	sb.WriteString(enCodeParams)
 	sb.WriteString("&")
-	sign, err := Sign(y.sysId + enCodeParams + encodeTimestamp)
+	sign, err := Sign(y.sysId + string(pBytes) + timestamp)
 	enCodeSign := caseTranslate(url.QueryEscape(sign))
 	return sb.String(), enCodeSign, nil
 }
