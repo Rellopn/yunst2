@@ -106,24 +106,25 @@ func (y *YunClient) buildPostBody(params map[string]interface{}) (string, string
 	if err != nil {
 		return "", "", err
 	}
+	enCodeParams := url.QueryEscape(string(pBytes))
 	timestamp := time.Now().Format("2006-01-02 15:04:05")
-	sign, err := Sign(y.sysId + string(pBytes) + timestamp)
+	encodeTimestamp := url.QueryEscape(timestamp)
 	if err != nil {
 		return "", "", err
 	}
 	sb := strings.Builder{}
 	sb.WriteString("sysid=")
 	sb.WriteString(y.sysId)
-	escape := url.QueryEscape(sign)
-	translate := caseTranslate(escape)
 	sb.WriteString("&timestamp=")
-	sb.WriteString(timestamp)
+	sb.WriteString(encodeTimestamp)
 	sb.WriteString("&v=")
 	sb.WriteString(y.version)
 	sb.WriteString("&req=")
-	sb.WriteString(string(pBytes))
+	sb.WriteString(enCodeParams)
 	sb.WriteString("&")
-	return sb.String(), translate, nil
+	sign, err := Sign(y.sysId + enCodeParams + encodeTimestamp)
+	enCodeSign := caseTranslate(url.QueryEscape(sign))
+	return sb.String(), enCodeSign, nil
 }
 
 func caseTranslate(sign string) string {
